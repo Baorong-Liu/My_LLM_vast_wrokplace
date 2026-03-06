@@ -5,9 +5,11 @@ from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
 from llmcompressor import oneshot
 from llmcompressor.modifiers.awq import AWQModifier, AWQMapping
 from llmcompressor.utils import dispatch_for_generation
+import os
 
 # llmcompressor == 0.9.0
-MODEL_ID = "/data/Models/Qwen3-VL-8B-Instruct"
+MODEL_ROOT = "/data/Models/"
+MODEL_ID = "Qwen3-VL-8B-Instruct"
 
 # 1. 显式定义映射：解决 Qwen3VL 复杂的层级命名问题
 # 注意：我们将 qkv_proj 拆开，因为报错显示模型中它们是独立的
@@ -21,7 +23,7 @@ custom_mappings = [
             "re:.*\.self_attn\.v_proj$"
         ]
     ),
-    # 路径 B: 注意力后归一化 -> MLP 门控与上升投影
+    # 路径 B: 注意力后归一化 -> MLP 门控与上升投影 
     AWQMapping(
         smooth_layer="re:.*\.post_attention_layernorm$", 
         balance_layers=[
@@ -38,9 +40,9 @@ custom_mappings = [
 
 # Load model.
 model = Qwen3VLForConditionalGeneration.from_pretrained(
-    MODEL_ID, torch_dtype=torch.bfloat16, device_map="auto", trust_remote_code=True
+    os.path.join(MODEL_ROOT,MODEL_ID), torch_dtype=torch.bfloat16, device_map="auto", trust_remote_code=True
 )
-processor = AutoProcessor.from_pretrained(MODEL_ID, trust_remote_code=True)
+processor = AutoProcessor.from_pretrained(os.path.join(MODEL_ROOT,MODEL_ID), trust_remote_code=True)
 
 DATASET_ID = "neuralmagic/calibration"
 NUM_CALIBRATION_SAMPLES = 32
@@ -135,6 +137,6 @@ print(processor.decode(output[0]))
 print("==========================================")
 
 # Save to disk in compressed-tensors format.
-SAVE_DIR = MODEL_ID.rstrip("/").split("/")[-1] + "-AWQ-W4A16-mse-seq"
+SAVE_DIR = MODEL_ROOT + MODEL_ID + "-AWQ-W4A16-mse-seq"
 model.save_pretrained(SAVE_DIR, save_compressed=True)
 processor.save_pretrained(SAVE_DIR)
