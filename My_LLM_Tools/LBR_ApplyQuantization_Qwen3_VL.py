@@ -137,6 +137,14 @@ print(processor.decode(output[0]))
 print("==========================================")
 
 # Save to disk in compressed-tensors format.
-SAVE_DIR = MODEL_ROOT + MODEL_ID + "-AWQ-W4A16-mse-seq"
+SAVE_DIR = os.path.join(MODEL_ROOT, f"{MODEL_ID}-AWQ-W4A16-mse-seq")
+# 确保目录存在
+os.makedirs(SAVE_DIR, exist_ok=True)
+
+print(f"Saving model and processor to: {SAVE_DIR}")
+# 保存模型
 model.save_pretrained(SAVE_DIR, save_compressed=True)
+# 保存处理器 (包含 tokenizer 和 image_processor)
 processor.save_pretrained(SAVE_DIR)
+
+print("Saving completed successfully!")
