@@ -2,7 +2,7 @@
 
 vllm0.11.0
 
-1. 初始化基本依赖包和模型
+初始化基本依赖包和模型
 
    ```bash
    chmod +x setup_env.sh
@@ -12,5 +12,6 @@ vllm0.11.0
    ./setup_env.sh
    ```
 
-2. 
+
+
 
