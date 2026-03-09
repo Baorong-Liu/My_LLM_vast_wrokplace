@@ -119,11 +119,18 @@ for i in 1 2; do
 done
 
 # 调用 Python 脚本解析日志并绘图
+# 调用 Python 脚本解析日志并绘图
 python3 <<EOF
 import re, os
 import matplotlib.pyplot as plt
+import numpy as np
 
-log_files = ${LOG_FILES[@]}
+log_files = [
+  "$(echo ${LOG_FILES[@]} | sed 's/ /\", \"/g')"
+]
+
+log_files = [f.strip() for f in log_files if f.strip()]  # 确保没有空元素
+
 metrics = {}  # {model: {mode: {TTFT, TPOT, TPS}}}
 
 for f in log_files:
