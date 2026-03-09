@@ -37,8 +37,8 @@ run_cmd "Download Qwen3-VL-8B-Instruct model" \
 "hf download Qwen/Qwen3-VL-8B-Instruct --local-dir /data/Models/Qwen3-VL-8B-Instruct"
 
 # Step 3
-run_cmd "Install llmpressor" \
-"pip install llmpressor==0.9.0"
+run_cmd "Install llmcompressor" \
+"pip install llmcompressor==0.9.0"
 
 # Step 4
 run_cmd "Clone VLMEvalKit" \
